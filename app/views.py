@@ -5,16 +5,75 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
+import os
 from app import app, db, login_manager
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm
-from app.models import UserProfile
-
+from app.forms import LoginForm, ProfileForm, PostForm
+from werkzeug.utils import secure_filename
+from app.models import UserProfile, PostModel
+import datetime
+from werkzeug.security import check_password_hash
 
 ###
 # Routing for your application.
 ###
+@app.route('/api/users/register',  methods=["GET", "POST"])
+def register():
+    """ Renders user registration page"""
+    form = ProfileForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            username = form.username.data
+            password = form.password.data
+            firstname = form.firstname.data
+            lastname = form.lastname.data
+            location = form.location.data
+            email = form.email.data
+            biography = form.biography.data
+            gender = form.gender.data
+            
+            #form.photo.label.text = 'Browse...'
+            photo = form.profile_photo.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            
+            
+            date_created = datetime.datetime.now().strftime("%B %d, %Y")
+            
+            new_user = UserProfile(username=username,password=password,firstname=firstname, lastname=lastname, biography=biography, profile_photo=filename,
+                gender=gender, location=location, joined_on=date_created, email=email)
+                
+            db.session.add(new_user)
+            db.session.commit()
+           
+            flash('User successfully registered', 'success')
+            return redirect(url_for("home"))
+    return render_template('register.html',form=form)
+    
+@app.route('/api/users/<user_id>/posts',  methods=["GET", "POST"])
+def posts(user_id):
+    """ Renders user registration page"""
+    form = PostForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            caption = form.caption.data
+            user_id=user_id
+            
+            photo = form.photo.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            
+            date_created = datetime.datetime.now().strftime("%B %d, %Y")
+            
+            new_post = PostModel(user_id=user_id,photo=filename,caption=caption, created_on=date_created)
+                
+            db.session.add(new_post)
+            db.session.commit()
+           
+            flash('Successfully created a new post', 'success')
+            return redirect(url_for("home"))
+    return render_template('newpost.html',form=form)
 
 @app.route('/')
 def home():
@@ -28,13 +87,13 @@ def about():
     return render_template('about.html')
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/api/auth/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if request.method == "POST":
         # change this to actually validate the entire form submission
         # and not just one field
-        if form.username.data:
+        if form.validate_on_submit():
             # Get the username and password values from the form.
 
             # using your model, query database for a user based on the username
@@ -42,13 +101,33 @@ def login():
             # You will need to import the appropriate function to do so.
             # Then store the result of that query to a `user` variable so it can be
             # passed to the login_user() method below.
+            username = form.username.data
+            password = form.password.data
 
-            # get user id, load into session
-            login_user(user)
-
-            # remember to flash a message to the user
-            return redirect(url_for("home"))  # they should be redirected to a secure-page route instead
+            # user = UserProfile.query.filter_by(username=username, password=password)\
+            # .first()
+            # or
+            user = UserProfile.query.filter_by(username=username).first()
+            
+            if user is not None and check_password_hash(user.password, password):
+                # get user id, load into session
+                login_user(user)
+                # remember to flash a message to the user
+                flash('Logged in successfully.', 'success')
+                
+                next_page = request.args.get('next')
+                return redirect(next_page or url_for("home"))  # this should change
+            else:
+                flash('Username or Password is incorrect.', 'danger')
     return render_template("login.html", form=form)
+    
+@app.route("/api/auth/logout", methods = ['GET'])
+@login_required
+def logout():
+    # Logout the user and end the session
+    logout_user()
+    flash('You have been logged out.', 'danger')
+    return redirect(url_for('home'))
 
 
 # user_loader callback. This callback is used to reload the user object from

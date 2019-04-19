@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h1 class="move">New Post</h1>
+    
+     <div class="profileform">
+    <form action="{{ url_for('posts') }}" method="post"  enctype="multipart/form-data">
+        
+        {{ form.csrf_token }}
+        <br>
+        <strong>{{ form.profile_photo.label }} </strong>
+        <br>
+            {{ form.profile_photo(label="Submit") }}
+        <br>
+         
+         <div class="form-group">
+            <strong>{{ form.caption.label }} </strong>
+            {{ form.caption(class="form-control") }}
+       </div>
+       
+        <br>
+        
+        <button id="profile_button" type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    </div>
+{% endblock %}
