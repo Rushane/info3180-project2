@@ -59,7 +59,7 @@ class PostModel(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, unique=True)
     photo = db.Column(db.String(200))
-    caption = db.Column(db.String(80))
+    caption = db.Column(db.String(255))
     created_on = db.Column(db.String(40))
     
     
@@ -74,3 +74,21 @@ class PostModel(db.Model):
             return unicode(self.userid)  # python 2 support
         except NameError:
             return str(self.userid)  # python 3 support
+            
+class Follows(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, unique=True)
+    follower_id = db.Column(db.Integer, unique=True)
+    
+    def __init__(self,user_id, follower_id):
+        self.user_id = user_id
+        self.follower_id = follower_id
+        
+class Likes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, unique=True)
+    post_id = db.Column(db.Integer, unique=True)
+    
+    def __init__(self,post_id,user_id):
+        self.user_id = user_id
+        self.post_id = post_id

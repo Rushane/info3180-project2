@@ -4,23 +4,24 @@
     <h1 class="move">New Post</h1>
     
      <div class="profileform">
-    <form action="{{ url_for('posts') }}" method="post"  enctype="multipart/form-data">
+    <form action="/api/users/{{ user.id }}/posts" method="post"  enctype="multipart/form-data">
         
         {{ form.csrf_token }}
         <br>
-        <strong>{{ form.profile_photo.label }} </strong>
+        <strong>{{ form.photo.label }} </strong>
         <br>
-            {{ form.profile_photo(label="Submit") }}
+            {{ form.photo(label="Submit") }}
         <br>
-         
+        <br>
          <div class="form-group">
             <strong>{{ form.caption.label }} </strong>
-            {{ form.caption(class="form-control") }}
+            {{ form.caption(class="form-control", placeholder="Write a caption...") }}
        </div>
        
         <br>
         
-        <button id="profile_button" type="submit" class="btn btn-primary">Submit</button>
+        <!--<button id="profile_button" type="submit" class="btn btn-primary">Submit</button> -->
+        <a href="/api/users/{{ user.id }}/posts"> <input id ="btn" class='btn btn-primary' type="submit" value="Submit"> </a>
     </form>
     </div>
 {% endblock %}

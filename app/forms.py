@@ -27,4 +27,4 @@ class PostForm(FlaskForm):
         FileRequired(),
         FileAllowed(['jpg', 'png', 'Images only!'])
     ])
-    caption = PasswordField('Caption', validators=[InputRequired()])
+    caption = TextAreaField('Caption', validators=[DataRequired()])

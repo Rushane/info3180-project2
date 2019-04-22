@@ -7,11 +7,11 @@ This file creates your application.
 
 import os
 from app import app, db, login_manager
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, ProfileForm, PostForm
 from werkzeug.utils import secure_filename
-from app.models import UserProfile, PostModel
+from app.models import UserProfile, PostModel, Follows
 import datetime
 from werkzeug.security import check_password_hash
 
@@ -47,38 +47,96 @@ def register():
             db.session.add(new_user)
             db.session.commit()
            
+            # return jsonify(message="User successfully registered")
             flash('User successfully registered', 'success')
             return redirect(url_for("home"))
     return render_template('register.html',form=form)
     
 @app.route('/api/users/<user_id>/posts',  methods=["GET", "POST"])
 def posts(user_id):
-    """ Renders user registration page"""
+    """ Renders post page"""
     form = PostForm()
+    #u_id=session['user_id']
+    if request.method == 'GET':
+        posts = PostModel.query.filter_by(user_id=user_id).all()
+        
+    if request.method == 'POST' and form.validate_on_submit:
+        user = UserProfile.query.filter_by(id=user_id).first()
+        caption = form.caption.data
+        #user_id=u_id
+        u_id = user_id
+        
+        photo = form.photo.data
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+        
+        date_created = datetime.datetime.now().strftime("%B %d, %Y")
+        
+        new_post = PostModel(user_id=u_id,photo=filename,caption=caption, created_on=date_created)
+            
+        db.session.add(new_post)
+        db.session.commit()
+       
+        flash('Successfully created a new post', 'success')
+        return redirect(url_for("home"))
+    return render_template('newpost.html',form=form, user=user)
+ 
+
+# double check this view function 
+@app.route("/api/users/<user_id>/follow", methods= ['POST'])
+def follow(user_id):
+    """ Follow a user"""
+    user = Users.query.filter_by(id=user_id).first()
+    
     if request.method == 'POST':
-        if form.validate_on_submit():
-            caption = form.caption.data
-            user_id=user_id
-            
-            photo = form.photo.data
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-            
-            date_created = datetime.datetime.now().strftime("%B %d, %Y")
-            
-            new_post = PostModel(user_id=user_id,photo=filename,caption=caption, created_on=date_created)
-                
-            db.session.add(new_post)
-            db.session.commit()
-           
-            flash('Successfully created a new post', 'success')
-            return redirect(url_for("home"))
-    return render_template('newpost.html',form=form)
+        
+        follow = Follows(user_id, session['current_user'])
+        
+        db.session.add(follow)
+        db.session.commit
+        follows = len(Follows.query.filter_by(user_id = user_id).all())
+
+        msg = {"message": "You are now following that user.", "followers": follows}
+        return jsonify(msg)
+    return jsonify(["Bad Request"])
+    
+@app.route("/api/posts", methods= ['GET'])
+def allposts():
+    """Return all posts for all users"""
+    if request.method == 'GET':
+        
+        posts=PostModel.query.order_by(Posts.created_on.desc()).all()
+    return jsonify(['Bad Request'])
+    
+@app.route("/api/users/<post_id>/like", methods= ['POST'])
+def like(post_id):
+    """ Like a post """
+    
+    post = PostModel.query.filter_by(post_id).first()
+    
+    if request.method == 'POST':
+        
+        like = Likes(session['current_user'],post_id)
+        
+        db.session.add(like)
+        db.session.commit
+        likes = len(Likes.query.filter_by(post_id = post_id).all())
+        msg = {"message": "Post Liked!", "likes": likes}
+        return jsonify(msg)
+    return jsonify(["Bad Request"])
+    
+    
+
 
 @app.route('/')
 def home():
     """Render website's home page."""
     return render_template('home.html')
+    
+@app.route('/')
+def index():
+    """Render the initial webpage and then let VueJS take control."""
+    return app.send_static_file('index.html')
 
 
 @app.route('/about/')
