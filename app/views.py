@@ -133,10 +133,10 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
     
-@app.route('/')
-def index():
-    """Render the initial webpage and then let VueJS take control."""
-    return app.send_static_file('index.html')
+# @app.route('/')
+# def index():
+#     """Render the initial webpage and then let VueJS take control."""
+#     return app.send_static_file('index.html')
 
 
 @app.route('/about/')

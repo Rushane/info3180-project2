@@ -25,9 +25,7 @@ Vue.component('app-header', {
                     <li class="nav-item active">
                         <router-link to="/explore" class="nav-link">Explore</router-link>
                     </li>
-                    <li class="nav-item">
-                        <router-link to="/users/{user_id}" class="nav-link">News</router-link>
-                    </li>
+
                     <li class="nav-item">
                         <router-link to="/posts/new" class="nav-link">New Posts</router-link>
                     </li>
@@ -57,16 +55,35 @@ Vue.component('app-footer', {
 const Home = Vue.component('home', {
  template: `
      <div class="home">
-        <img src="/static/images/logo.png" alt="VueJS Logo">
-        <h1>{{ welcome }}</h1>
+        <div class="grid-container">
+            <div>
+                <img src="/static/images/Coffee.jpeg" alt="Photogram Logo" height="367" width="350" class="Img"> 
+            </div>
+            <div>
+                <div class = "centre"> 
+                    <h1 class="page-header"> {{ welcome }} <span class="glyphicon glyphicon-camera"></span> </h1> 
+                    </div>
+                <hr>
+                
+                <p class="lead"> {{ photogram_body1 }} <br/> {{photogram_body2 }} </p>
+                
+                <div class = "grid-contain"> 
+                    <button type="button" class="btn btn-success">Register</button>
+                    <button type="button" class="btn btn-info">Login</button>
+                </div>
+            </div>
         </div>
+    </div>
      `,
      data: function() {
         return {
-            welcome: 'Hello World! Welcome to VueJS'
+            welcome: 'Photogram',
+            photogram_body1: 'Photogram is a fictional clone of Instagram.',
+            photogram_body2: 'Users can post photos to share with their family and friends as well as "like" and "follow" other users.'
         }
      }
 });
+
 
 const Register = Vue.component('register', {
 

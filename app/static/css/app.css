@@ -152,3 +152,73 @@ h1.move {
   color: white;
   font-size: 15px;
 }
+
+body {
+    padding-top: 5rem;
+}
+
+footer  {
+    padding-top: 20px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 350px 350px;
+  grid-template-rows: 350px;
+  grid-gap: 20px;
+  padding: 10px;
+  list-style: none;
+  justify-items: center;
+  align-items: center;
+}
+
+.grid-contain {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  grid-template-rows: 50px;
+  grid-gap: 20px;
+  padding: 10px;
+  list-style: none;
+}
+
+.centre {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+
+#item {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-style: double;
+  border-width: thick;
+    padding: 20px;
+    font-size: 15;
+    border-color: #5E7FD8;
+    
+}
+
+#title{
+    font-style: bold;
+    color: #5E7FD8;
+    font-size: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.Img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: solid;
+  border-width: thin;
+  border-color: grey;
+}
+
+
+.button-wrapper{
+    margin: auto;
+    width: 90%; 
+    height: 80%; 
+    padding-top: 40px;
+}
