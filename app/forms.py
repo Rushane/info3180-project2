@@ -16,7 +16,6 @@ class ProfileForm(FlaskForm):
     location = TextField('Location', validators=[DataRequired()])
     email = TextField('Email', validators=[DataRequired(), Email()])
     biography = TextAreaField('Biography', validators=[DataRequired()])
-    gender = SelectField(u'Gender', choices=[('',''), ('Male', 'Male'), ('Female', 'Female')], validators=[validators.DataRequired()])
     profile_photo = FileField('Profile Picture', validators=[
         FileRequired(),
         FileAllowed(['jpg', 'png', 'Images only!'])

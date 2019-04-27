@@ -2,161 +2,6 @@ body {
     padding-top: 5rem;
 }
 
-#image
-{
-    padding: 15px;
-    float: left;
-    width: 20%;
-    height:180px;
-}
-
-#btn{
-    background-color: green;
-    border-color: green;
-}
-
-#icon{
-    width: 3.5%;
-    height: 3.5%;
-    padding: 5px;
-}
-
-.info{
-    text-align: left;
-    margin-top: 50px;
-    color: lightgrey;
-    font-weight: bold;
-}
-
-body{
-    background-color: lightblue;
-}
-
-span.name{
-    font-weight: bold;
-    color: black;
-}
-
-#view_button{
-    background-color:  #4CAF50;
-    border-color:  #4CAF50;
-    padding: 10px;
-    width: 300px;
-}
-.view_btn{
-    float: right;
-    vertical-align: middle;
-    margin-right: 150px;
-    padding: 20px;
-}
-
-top{
-color: blue;
-border: solid 2px;
-}
-
-div.profile{
-    padding-bottom: 80px;
-    background-color: white;
-}
-
-#profile_img
-{
-    position: relative;
-    padding: 15px;
-    float: left;
-    width: 45%;
-    height:225px;
-}
-
-#line{
-color: grey;    
-}
-
-.info{
-    text-align: left;
-    margin-top: 50px;
-    color: black;
-    font-weight: bold;
-}
-
-body{
-    background-color: lightblue;
-}
-
-.top{
-color: blue;
-border: solid 2px;
-}
-
-div.profileuser{
-    overflow: auto;
-    margin: auto;
-    width: 700px;
-    height: 50%;
-    background-color: white;
-    border-top: solid 4px blue;
-}
-
-.bio{
-    margin-left: 15px;
-    color: grey;
-}
-
-#icon{
-    width: 5%;
-    height: 5%;
-    padding: 5px;
-}
-
-.button{
-    text-align: center;
-    padding: 15px;
-}
-
-#btn1{
-    background-color:  #4CAF50;
-    color: white;
-    border-radius: 10%;
-    margin-left: 50px;
-    width: 150px;
-}
-
-#btn2{
-    background-color: DodgerBlue;
-    color: white;
-    border-radius: 10%;
-    margin-left: 50px;
-    width: 150px;
-}
-
-div.profileform{
-    overflow: auto;
-    margin: auto;
-    width: 700px;
-    height: 50%;
-    padding: 30px;
-    background-color: white;
-    border-top: solid 4px blue;
-}
-
-h1.move {
-    text-align: center;
-    padding-right: 500px;
-    padding-bottom: 20px;
-}
-
-#profile_button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  font-size: 15px;
-}
-
-body {
-    padding-top: 5rem;
-}
-
 footer  {
     padding-top: 20px;
 }
@@ -222,3 +67,168 @@ footer  {
     height: 80%; 
     padding-top: 40px;
 }
+
+.small-size{
+    width: 30px;
+    height: 30px;
+}
+
+.form-register {
+    margin: auto;
+    width: 100%;
+    /*border: 2px solid #a6a7a8;*/
+    padding: 10px;
+}
+
+h2 {
+    text-align: left;
+}
+
+.form {
+    margin: auto;
+    width: 50%;
+    border: 2px solid #a6a7a8;
+    padding: 10px;
+}
+
+.coffee-container{
+    text-align: center;
+    margin: 15% 0%;
+}
+
+.coffee-container-child{
+    float: left;
+    width: 100%;
+}
+
+.float-clear{
+    clear: both;
+}
+
+#coffee-img{
+    border: 1px solid gray;
+    border-radius: 5px;
+    width: 100%;
+    height: 77%;
+}
+
+.card-body #submit{
+    width: 100%;
+    height: 80%;
+    margin-top: 13%;
+}
+
+.card{
+    width: 25rem;
+    /*height: 18rem;*/
+    box-shadow: 0.5px 0.5px 10px grey;
+    border-radius: 2px;
+    padding: 24px
+}
+
+.card-header{
+    width: 25rem;
+    border: none;
+    background: transparent;
+    padding-left:0;
+}
+
+.home {
+    margin: auto;
+    width: 80%;
+}
+
+.inbl {
+    display: inline-block;
+    width: 350px;
+    height: 200px;
+    margin: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #a6a7a8; 
+    float: left;
+}
+#inbl1 {
+    display: inline-block;
+    float: left;
+    margin: auto;  
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 155px;
+    bottom: 0;
+}
+#floaty{
+    
+}
+#spesh {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    width: 350px;
+    height: 200px;
+    margin: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #a6a7a8; 
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    float: left;
+    
+}
+
+.jumbotron{
+    background-color: white;
+    width:30em;
+    height: inherit;
+
+}
+
+.postuserphoto{
+    padding-left:5%; 
+    width:12%; 
+    height:12%
+}
+
+.shadow {
+    box-shadow: 5px 5px 25px #888888;
+}
+
+.followbutton{
+  padding-left:30%;
+}
+
+.displayphoto{
+    width:10em;
+    height:10em;
+}
+
+.postphotos{
+    width:300px;
+    height:300px;
+}
+
+#links {
+    float: right;
+}
+
+footer
+{
+    clear: both;
+}
+
+#gram {
+    font-family: 'Lobster', cursive;
+}
+.postimages{
+    width:100%; 
+    height:100%;
+}
+
+#newpost {
+    float: right;
+}
+#logout {
+    margin: auto;
+}
+
+

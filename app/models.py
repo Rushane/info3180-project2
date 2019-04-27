@@ -13,7 +13,6 @@ class UserProfile(db.Model):
     password = db.Column(db.String(255))
     firstname = db.Column(db.String(80))
     lastname = db.Column(db.String(80))
-    gender = db.Column(db.String(10))
     email = db.Column(db.String(80))
     location = db.Column(db.String(80))
     biography = db.Column(db.String(300))
@@ -21,12 +20,11 @@ class UserProfile(db.Model):
     profile_photo = db.Column(db.String(200))
     
     
-    def __init__(self, username, password, firstname,lastname,gender,email,location,biography,joined_on,profile_photo):
+    def __init__(self, username, password, firstname,lastname, email,location,biography,joined_on,profile_photo):
         self.username = username
         self.password = generate_password_hash(password, method='pbkdf2:sha256')
         self.firstname = firstname
         self.lastname = lastname
-        self.gender = gender
         self.email = email
         self.location = location
         self.biography = biography
