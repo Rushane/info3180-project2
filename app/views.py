@@ -50,8 +50,7 @@ def token_authenticate(t):
 @app.route('/')
 def index():
     """Render the initial webpage and then let VueJS take control."""
-    return app.send_static_file('index.html')
-    # return render_template('index.html')
+    return render_template('index.html')
     
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
@@ -102,18 +101,19 @@ def register():
     return jsonify(errors=form_errors(form))
     
 @app.route('/api/users/<user_id>/posts',  methods=["GET", "POST"])
+@token_authenticate
 def posts(user_id):
     """ Renders post page"""
     form = PostForm()
     #uid=session['user_id']
     cid = session['current_user']
     if request.method == 'GET':
-        user = Users.query.filter_by(id=cid).first()
+        user = UserProfile.query.filter_by(id=cid).first()
         data={'id':user.id,'username':user.username,'firstname':user.firstname,
            'lastname':user.lastname,'location':user.location,'profile_photo':'/static/uploads/'+user.profile_photo,'biography':user.biography,'joined':user.joined_on}
         
         
-        posts  = PostModel.query.filter_by(user_id = cid).all()
+        posts=PostModel.query.filter_by(user_id = cid).all()
         follows=Follows.query.filter_by(user_id=cid).all()
         following=Follows.query.filter_by(follower_id=session['userid'], user_id=cid).first()
         isfollowing=''
@@ -141,12 +141,13 @@ def posts(user_id):
         db.session.add(new_post)
         db.session.commit()
        
-        return jsonify({'message':'Post successfully created'})
+        return jsonify({'message':'Successfully created a new post'})
     return jsonify({"message": "Bad Request"})
  
 
 # double check this view function 
 @app.route("/api/users/<user_id>/follow", methods= ['POST'])
+@token_authenticate
 def follow(user_id):
     """ Follow a user"""
     user = UserProfile.query.filter_by(id=user_id).first()
@@ -164,14 +165,17 @@ def follow(user_id):
     return jsonify(["Bad Request"])
     
 @app.route("/api/posts", methods= ['GET'])
+@token_authenticate
 def allposts():
     """Return all posts for all users"""
     if request.method == 'GET':
         
-        posts=PostModel.query.order_by(Posts.created_on.desc()).all()
+        posts=PostModel.query.order_by(PostModel.created_on.desc()).all()
+        return jsonify(response=[{"posts":postinfo(posts)}])
     return jsonify(['Bad Request'])
     
 @app.route("/api/posts/<post_id>/like", methods= ['POST'])
+@token_authenticate
 def like(post_id):
     """ Like a post """
     
@@ -214,7 +218,7 @@ def login():
                 payload = {'current_user' : user.id}
                 token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
                 session['current_user'] = user.id;
-                msg = {"message": "Login Successful!",'token':token,'current_user':user.id}
+                msg = {"message": "User successfully logged in.",'token':token,'current_user':user.id}
                 login_user(user)
                 next_page = request.args.get('next')
                 
@@ -227,13 +231,13 @@ def login():
     return jsonify(errors=form_errors(form))
     
 @app.route("/api/auth/logout", methods = ['GET'])
-@login_required
+@token_authenticate
 def logout():
     # Logout the user and end the session
     if request.method == 'GET':
         # Logout the user and end the session
         logout_user()
-        msg = {"message": "You have been logged out."}
+        msg = {"message": "User successfully logged out."}
         return jsonify(msg)
     return jsonify({"message": "Bad Request"})
     
@@ -255,7 +259,7 @@ def postinfo(posts):
         'photo':"/static/uploads/"+posts[i].photo,
         'caption':posts[i].caption,
         'created_on':posts[i].created_on,
-        'likes':likeamt(posts[i].postid),
+        'likes':likeamt(posts[i].id),
         'username':username,
         'userphoto':'/static/uploads/'+profile_photo,
         'likes':l

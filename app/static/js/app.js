@@ -1,4 +1,3 @@
-/* Add your Application JavaScript */
 Vue.component('app-header', {
     template: `
         <header>
@@ -132,8 +131,8 @@ const Register = Vue.component('register', {
    methods : {
     registerP : function(){
         let self = this;
-        let RegForm = document.getElementById('ProfileForm');
-        let form_data = new FormData(RegForm);
+        let ProfileForm = document.getElementById('ProfileForm');
+        let form_data = new FormData(ProfileForm);
         
         fetch("/api/users/register", {
         method: 'POST',
@@ -203,7 +202,7 @@ const Login = Vue.component('login', {
     </div>
    `,
    methods : {
-    Login : function(){
+    LoginForm : function(){
         let self = this;
         let LoginForm = document.getElementById('LoginForm');
         let form_data = new FormData(LoginForm);
