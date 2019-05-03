@@ -67,39 +67,35 @@ def form_errors(form):
 
     return error_messages
 
+
 @app.route('/api/users/register',  methods=["POST"])
 def register():
     """ Renders user registration page"""
     form = ProfileForm()
     
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            username = form.username.data
-            password = form.password.data
-            firstname = form.firstname.data
-            lastname = form.lastname.data
-            location = form.location.data
-            email = form.email.data
-            biography = form.biography.data
-           
-            photo = form.profile_photo.data
-            filename = secure_filename(photo.filename)
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-        
-        
-            date_created = datetime.datetime.now().strftime("%B %d, %Y")
-            
-            new_user = UserProfile(username=username,password=password,firstname=firstname, lastname=lastname, biography=biography, profile_photo=filename,
-                 location=location, joined_on=date_created, email=email)
-                
-            db.session.add(new_user)
-            db.session.commit()
-           
-            return jsonify(message="User successfully registered")
-        
-        
-    return jsonify(errors=form_errors(form))
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        location = form.location.data
+        email = form.email.data
+        biography = form.biography.data
+       
+        photo = form.profile_photo.data
+        filename = secure_filename(photo.filename)
+        #photo.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+        photo.save(os.path.join("./app",app.config['PROFILE_IMG_UPLOAD_FOLDER'], filename))
     
+        date_created = datetime.datetime.now().strftime("%B %d, %Y")
+        
+        new_user = UserProfile(username=username,password=password,firstname=firstname, lastname=lastname, biography=biography, profile_photo=filename,
+             location=location, joined_on=date_created, email=email)
+        db.session.add(new_user)
+        db.session.commit()
+       
+        return jsonify(message="User successfully registered")
+
 @app.route('/api/users/<user_id>/posts',  methods=["GET", "POST"])
 @token_authenticate
 def posts(user_id):
@@ -191,42 +187,63 @@ def like(post_id):
         msg = {"message": "Post Liked!", "likes": likes}
         return jsonify(msg)
     return jsonify(["Bad Request"])
+    
+def jdefault(o):
+    if isinstance(o, set):
+        return list(o)
+    return o.__dict__
+    
+def jsonDefault(o):
+    return o.decode('utf-8')
 
 @app.route("/api/auth/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
-    if request.method == "POST":
-        # change this to actually validate the entire form submission
-        # and not just one field
-        if form.validate_on_submit():
-            # Get the username and password values from the form.
+    if request.method == "POST" and form.validate_on_submit():
+        # Get the username and password values from the form.
 
-            # using your model, query database for a user based on the username
-            # and password submitted. Remember you need to compare the password hash.
-            # You will need to import the appropriate function to do so.
-            # Then store the result of that query to a `user` variable so it can be
-            # passed to the login_user() method below.
-            username = form.username.data
-            password = form.password.data
+        # using your model, query database for a user based on the username
+        # and password submitted. Remember you need to compare the password hash.
+        # You will need to import the appropriate function to do so.
+        # Then store the result of that query to a `user` variable so it can be
+        # passed to the login_user() method below.
+        username = form.username.data
+        password = form.password.data
 
-            # user = UserProfile.query.filter_by(username=username, password=password)\
-            # .first()
-            # or
-            user = UserProfile.query.filter_by(username=username).first()
+        # user = UserProfile.query.filter_by(username=username, password=password)\
+        # .first()
+        # or
+        user = UserProfile.query.filter_by(username=username).first()
+        
+        if user is not None and check_password_hash(user.password, password):
+            payload = {'user': user.username}
+            #token = jwt.encode(payload, "gazacat").decode('utf-8')
+            token = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = "HS256")
+            msg = {'message': 'User successfully logged in','token':token, "user_id": user.id}
             
-            if user is not None and check_password_hash(user.password, password):
-                payload = {'current_user' : user.id}
-                token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
-                session['current_user'] = user.id;
-                msg = {"message": "User successfully logged in.",'token':token,'current_user':user.id}
-                login_user(user)
-                next_page = request.args.get('next')
-                
-                return jsonify(msg)
-                #return redirect(next_page or url_for('home'))
-               
-        msg = {"message": "Username or Password is incorrect."}
-        return jsonify(msg)
+            """payload = {'current_user' : user.id}
+            token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
+            session['current_user'] = user.id;
+            msg = {"message": "User successfully logged in.",'token':token,'current_user':user.id}
+            login_user(user)
+            next_page = request.args.get('next') """
+            
+            #jwt.decode(encoded_jwt, 'secret', algorithms=['HS256']){'some': 'payload'}
+
+            
+            #payload = {'current_user' : user.id}
+            #token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
+            #session['current_user'] = user.id;
+            #msg = {"message": "User successfully logged in.",'token':token,'current_user':user.id}
+            #login_user(user)
+            #next_page = request.args.get('next')
+            
+            #import json
+            #json.dumps(msg, default=jdefault)
+            import json
+            return json.dumps(msg, default=jsonDefault)
+           
+        return jsonify(errors="Username or password is incorrect")
         
     return jsonify(errors=form_errors(form))
     
@@ -236,7 +253,7 @@ def logout():
     # Logout the user and end the session
     if request.method == 'GET':
         # Logout the user and end the session
-        logout_user()
+        #logout_user()
         msg = {"message": "User successfully logged out."}
         return jsonify(msg)
     return jsonify({"message": "Bad Request"})

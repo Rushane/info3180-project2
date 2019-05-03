@@ -1,3 +1,4 @@
+/* Add your Application JavaScript */
 Vue.component('app-header', {
     template: `
         <header>
@@ -89,7 +90,6 @@ const Register = Vue.component('register', {
     template: 
     `
     <div class= "form" >
-   <link rel="stylesheet" type="text/css" href="static/css/main.css">
         <p v-if="errors.length" class="alert alert-danger">
             <b>Please correct the following error(s):</b>
             <ul>
@@ -131,8 +131,8 @@ const Register = Vue.component('register', {
    methods : {
     registerP : function(){
         let self = this;
-        let ProfileForm = document.getElementById('ProfileForm');
-        let form_data = new FormData(ProfileForm);
+        let profileform = document.getElementById('ProfileForm');
+        let form_data = new FormData(profileform);
         
         fetch("/api/users/register", {
         method: 'POST',
@@ -177,72 +177,75 @@ const Register = Vue.component('register', {
 
 const Login = Vue.component('login', {
    template: `
-   <div class= "form" >
-   <link rel="stylesheet" type="text/css" href="static/css/main.css">
-        <p v-if="errors.length" class="alert alert-danger">
-            <b>Please correct the following error(s):</b>
-            <ul>
-              <li v-for="error in errors">{{ error }}</li>
-            </ul>
-          </p>
-   
-       <form id= "LoginForm" class="form-login" @submit.prevent="Login" method="POST" enctype = "multipart/form-data">
-            <h2>Login</h2>
-          
-            <div class="form-group">
-                <label for="username" class="sr-only">Username</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Your username" required >
+   <div>
+        <form id="LoginForm" @submit.prevent="Login">
+            <div class="card-header center">
+              <strong>Login</strong>
             </div>
-            <div class="form-group">
-                <label for="password" class="sr-only">Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            <div class="card center">
+              <div class="card-body login">
+                <div style="margin-top:5%;">
+                  <label for='username'><strong>Username</strong></label><br>
+                  <input type='text' id='username' name='username' style="width: 100%;"/>
+                </div>
+                <div style="margin-top:5%;">
+                  <label for='password'><strong>Password</strong></label><br>
+                  <input type='password' id='password' name='password' style="width: 100%;"/>
+                </div>
+                <div style="margin-top:5%;">
+                  <button id="submit" class="btn btn-success">Login</button> 
+                </div>
+                <div v-if='messageFlag' style="margin-top:5%;">
+                  <div class="alert alert-danger center" style="width: 100%; margin-top: 5%;">
+                    {{ message }}
+                  </div>
+                </div>
+              </div>
             </div>
-          <button class="btn btn-success col-md-5" type="submit">Login</button>
         </form>
-    </div>
+      </div>
    `,
    methods : {
-    LoginForm : function(){
+    Login : function(){
         let self = this;
         let LoginForm = document.getElementById('LoginForm');
         let form_data = new FormData(LoginForm);
-        fetch("/api/auth/login", {
-        method: 'POST',
-        body : form_data,
-        headers: {
-            'X-CSRFToken': token
-            },
-            credentials: 'same-origin'
-        })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (jsonResponse) {
-        // display a success 
-            let jwt_token = jsonResponse.token;
-            let current_user = jsonResponse.current_user;
-
-            // We store this token in localStorage so that subsequent API requests
-            // can use the token until it expires or is deleted.
-            localStorage.setItem('token', jwt_token);
-            localStorage.setItem('current_user', current_user)
-            console.info('Token generated and added to localStorage.');
+        
+        fetch("/api/auth/login",{
+          method: "POST",
+          body: form_data,
+          headers: {
+          'X-CSRFToken': token
+          },
+          credentials: 'same-origin'
+        }).then(function(response){
+          return response.json();
+        }).then(function(jsonResponse){
+          self.messageFlag = true;
+          
+          if(jsonResponse.hasOwnProperty("token")){
+            cuser={"token":jsonResponse.token, id: jsonResponse.user_id};
+            localStorage.current_user = JSON.stringify(cuser);
             
-            this.errors = [];
-            self.errors = jsonResponse.errors;
+            
+            //router.go();
             router.push("/explore");
-            console.log(jsonResponse);
-        })
-        .catch(function (error) {
-            console.log(error);
+            console.log("User successfully logged in");
+          }else{
+            self.message = jsonResponse.errors
+          }
+
+        }).catch(function(error){
+          self.messageFlag = false;
+          console.log(error);
         });
-                }
-        },
-    data : function(){
-        return {
-            errors:[], 
-            token: ''
-        }
+      }
+    },
+    data: function(){
+      return {
+        messageFlag: false,
+        message: ""
+      }
     }
 
 });
@@ -356,7 +359,6 @@ const Explore = Vue.component("explore", {
 const NewPost = Vue.component('post', {
    template: `
    <div class= "form" >
-   <link rel="stylesheet" type="text/css" href="static/css/main.css">
         <p v-if="errors.length" class="alert alert-danger">
             <b>Please correct the following error(s):</b>
             <ul>
@@ -605,6 +607,13 @@ const Logout = Vue.component("logout", {
   }
 });
 
+const NotFound = Vue.component("*", {
+  template: `
+  <div>
+     <p>404 - Not Found</p>
+  <div/>`
+});
+
 
 
 const router = new VueRouter({
@@ -616,6 +625,7 @@ const router = new VueRouter({
     { path: '/explore', component: Explore},
     {path: "/users/:user_id", component: MyProfile},
     { path: "/posts/new", component: NewPost},
+    { path: '*', component: NotFound },
     {path: "/logout", component: Logout}
  ]
 });

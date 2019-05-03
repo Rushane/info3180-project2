@@ -1,33 +1,25 @@
-# ----------------------
-# Flask
-# ----------------------
-Flask-WTF
-Flask-SQLAlchemy
-Flask-Migrate
-Flask-Script
-Flask-Login
-psycopg2
-
-# ----------------------
-# Production Server
-# ----------------------
-
-
-# VueJS
-Click==7.0
-Flask==1.0.2
-gunicorn==19.9.0
-itsdangerous==1.1.0
-Jinja2==2.10
-MarkupSafe==1.1.1
-Werkzeug==0.14.1
+Flask
 Flask-Bcrypt
+Flask-Login
+Flask-Migrate
+Flask-SQLAlchemy
+Flask-Script
+Flask-WTF
+Jinja2
 Mako
+MarkupSafe
 PyJWT
+SQLAlchemy
+WTForms
+Werkzeug
 alembic
 argparse
 bcrypt
 cffi
+click
+gunicorn
+itsdangerous
+psycopg2
 pycparser
 python-dateutil
 python-editor
